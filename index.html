@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search and Play</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
 
+        header {
+            background-color: #444;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+
+        #movie-search {
+            background-color: #444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        #movie-search label, #movie-search input, #search-movie {
+            display: block;
+            margin: 10px auto;
+            width: 80%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #search-movie {
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #search-movie:hover {
+            background-color: #0056b3;
+        }
+
+        #movie-info {
+            background-color: #444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 0 auto;
+            max-width: 500px;
+        }
+
+        #poster {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        h2, p {
+            color: #fff;
+            margin: 10px 0;
+        }
+
+        #play-movie {
+            background-color: #FFC107;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #play-movie:hover {
+            background-color: #FFA000;
+        }
+    </style>
+</head>
+<body>
+   
+    <div id="movie-search">
+        <label for="movieName">Enter Movie Name:</label>
+        <input type="text" id="movieName" placeholder="Movie Name">
+        <button id="search-movie">Search Movie</button>
+    </div>
+    <div id="movie-info">
+        <h2>Movie Information</h2>
+        <img id="poster" src="" alt="Movie Poster">
+        <p><strong>Title:</strong> <span id="title"></span></p>
+        <p><strong>Release Date:</strong> <span id="release-date"></span></p>
+        <p><strong>Overview:</strong> <span id="overview"></span></p>
+        <!-- New elements for revenue, budget, duration, and status -->
+        <p><strong>Revenue:</strong> <span id="revenue"></span></p>
+        <p><strong>Budget:</strong> <span id="budget"></span></p>
+        <p><strong>Duration:</strong> <span id="duration"></span></p>
+        <p><strong>Status:</strong> <span id="status"></span></p>
+        <button id="play-movie">Play Movie</button>
+    </div>
+    
+    <script>
+        const apiKey = '73d9c974de945f926de44d220c9a65c9'; // Replace with your TMDB API key
+        const searchMovieButton = document.getElementById('search-movie');
+        const movieInfoDiv = document.getElementById('movie-info');
+        const posterImg = document.getElementById('poster');
+        const titleSpan = document.getElementById('title');
+        const releaseDateSpan = document.getElementById('release-date');
+        const overviewSpan = document.getElementById('overview');
+        const revenueSpan = document.getElementById('revenue'); // New element for revenue
+        const budgetSpan = document.getElementById('budget'); // New element for budget
+        const durationSpan = document.getElementById('duration'); // New element for duration
+        const statusSpan = document.getElementById('status'); // New element for status
+        const playMovieButton = document.getElementById('play-movie');
+        const movieNameInput = document.getElementById('movieName');
+
+        // Function to search for a movie by name
+        function searchMovieByName(movieName) {
+            fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(movieName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results.length > 0) {
+                        const movie = data.results[0]; // Take the first result (you can modify this logic)
+                        posterImg.src = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`;
+                        titleSpan.textContent = movie.title;
+                        releaseDateSpan.textContent = movie.release_date;
+                        overviewSpan.textContent = movie.overview;
+                        
+                        // Fetch additional movie details including revenue, budget, duration, and status
+                        fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${apiKey}&append_to_response=videos`)
+                            .then(response => response.json())
+                            .then(movieDetails => {
+                                // Display revenue, budget, duration, and status
+                                revenueSpan.textContent = `$${movieDetails.revenue}`;
+                                budgetSpan.textContent = `$${movieDetails.budget}`;
+                                statusSpan.textContent = movieDetails.status;
+
+                                // Calculate and display duration in the format "2h 8m"
+                                const durationInMinutes = movieDetails.runtime;
+                                const hours = Math.floor(durationInMinutes / 60);
+                                const minutes = durationInMinutes % 60;
+                                durationSpan.textContent = `${hours}h ${minutes}m`;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching movie details:', error);
+                            });
+
+                        movieInfoDiv.style.display = 'block';
+
+                        // Store the TMDB ID for playing the movie
+                        playMovieButton.dataset.tmdbId = movie.id;
+                    } else {
+                        console.error('Movie not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching movie data:', error);
+                });
+        }
+
+        // Search for "Blue Beetle" by default when the page loads
+        window.addEventListener('load', () => {
+            searchMovieByName('Blue Beetle');
+searchMovieByName('Black Adam');
+
+        });
+        // Event listener for searching a movie by name
+        searchMovieButton.addEventListener('click', () => {
+            const movieName = movieNameInput.value;
+            searchMovieByName(movieName);
+        });
+
+        // Event listener for playing the movie
+        playMovieButton.addEventListener('click', () => {
+            const tmdbID = playMovieButton.dataset.tmdbId;
+            if (tmdbID) {
+                window.location.href = `https://nx-official.site/EMBED/?tmdb=${tmdbID}`;
+            } else {
+                console.error('TMDB ID not available');
+            }
+        });
+    </script>
+</body>
+</html>
