@@ -112,37 +112,37 @@
     </div>
     
     <script>
-        const apiKey = '73d9c974de945f926de44d220c9a65c9'; // Replace with your TMDB API key
+        const apiKey = 'TMDB_API_KEY' "https://developer.themoviedb.org/reference/intro/getting-started"; // Replace with your TMDB API key
         const searchMovieButton = document.getElementById('search-movie');
         const movieInfoDiv = document.getElementById('movie-info');
         const posterImg = document.getElementById('poster');
         const titleSpan = document.getElementById('title');
         const releaseDateSpan = document.getElementById('release-date');
         const overviewSpan = document.getElementById('overview');
-        const revenueSpan = document.getElementById('revenue'); // New element for revenue
-        const budgetSpan = document.getElementById('budget'); // New element for budget
-        const durationSpan = document.getElementById('duration'); // New element for duration
-        const statusSpan = document.getElementById('status'); // New element for status
+        const revenueSpan = document.getElementById('revenue'); 
+        const budgetSpan = document.getElementById('budget'); 
+        const durationSpan = document.getElementById('duration'); 
+        const statusSpan = document.getElementById('status'); 
         const playMovieButton = document.getElementById('play-movie');
         const movieNameInput = document.getElementById('movieName');
 
-        // Function to search for a movie by name
+    
         function searchMovieByName(movieName) {
             fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(movieName)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.results.length > 0) {
-                        const movie = data.results[0]; // Take the first result (you can modify this logic)
+                        const movie = data.results[0]; 
                         posterImg.src = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`;
                         titleSpan.textContent = movie.title;
                         releaseDateSpan.textContent = movie.release_date;
                         overviewSpan.textContent = movie.overview;
                         
-                        // Fetch additional movie details including revenue, budget, duration, and status
+                       
                         fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=${apiKey}&append_to_response=videos`)
                             .then(response => response.json())
                             .then(movieDetails => {
-                                // Display revenue, budget, duration, and status
+                              
                                 revenueSpan.textContent = `$${movieDetails.revenue}`;
                                 budgetSpan.textContent = `$${movieDetails.budget}`;
                                 statusSpan.textContent = movieDetails.status;
@@ -159,7 +159,7 @@
 
                         movieInfoDiv.style.display = 'block';
 
-                        // Store the TMDB ID for playing the movie
+                      
                         playMovieButton.dataset.tmdbId = movie.id;
                     } else {
                         console.error('Movie not found');
@@ -170,23 +170,22 @@
                 });
         }
 
-        // Search for "Blue Beetle" by default when the page loads
+      
         window.addEventListener('load', () => {
             searchMovieByName('Blue Beetle');
 searchMovieByName('Black Adam');
 
         });
-        // Event listener for searching a movie by name
+      
         searchMovieButton.addEventListener('click', () => {
             const movieName = movieNameInput.value;
             searchMovieByName(movieName);
         });
 
-        // Event listener for playing the movie
         playMovieButton.addEventListener('click', () => {
             const tmdbID = playMovieButton.dataset.tmdbId;
             if (tmdbID) {
-                window.location.href = `https://nx-official.site/EMBED/?tmdb=${tmdbID}`;
+                window.location.href = `https://nx-official.site/EMBED/?tmdb=${tmdbID}`;// For Movie Playing Link Use This Link If You Want To Watch Series "https://nx.offical.site/PlAYER/?tmdb=${tmdbID}&type=tv&e=${episode}&season={season}"
             } else {
                 console.error('TMDB ID not available');
             }
