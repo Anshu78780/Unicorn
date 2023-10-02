@@ -110,7 +110,7 @@
         // TMDb API Key (replace with your own)
         const apiKey = '______________________________________________';
 
-        // Function to fetch movie genres from TMDb
+      
         async function fetchGenres() {
             try {
                 const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`);
@@ -123,14 +123,14 @@
                     genreSelect.appendChild(option);
                 });
 
-                // Pre-select "Action" genre
+                
                 genreSelect.value = '28';
             } catch (error) {
                 console.error('Error fetching genres:', error);
             }
         }
 
-        // Function to fetch and display movies by genre
+
         async function fetchMoviesByGenre() {
             const genreId = document.getElementById('genreSelect').value;
             const movieContainer = document.getElementById('movieContainer');
@@ -139,7 +139,7 @@
             try {
                 const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genreId}&page=1`);
                 const data = await response.json();
-                const movies = data.results.slice(0, 16); // Limit to 16 movies (4x4 grid)
+                const movies = data.results.slice(0, 16); 
 
                 movies.forEach(movie => {
                     const movieDiv = document.createElement('div');
@@ -162,7 +162,7 @@
             }
         }
 
-        // Function to search for movies by name
+
         async function searchMoviesByName() {
             const movieName = document.getElementById('movieSearch').value;
             const movieContainer = document.getElementById('movieContainer');
@@ -171,7 +171,7 @@
             try {
                 const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${movieName}`);
                 const data = await response.json();
-                const movies = data.results.slice(0, 16); // Limit to 16 movies (4x4 grid)
+                const movies = data.results.slice(0, 16);
 
                 movies.forEach(movie => {
                     const movieDiv = document.createElement('div');
@@ -194,7 +194,7 @@
             }
         }
 
-        // Initialize the page with genres and load "Action" genre movies by default
+      
         fetchGenres();
         fetchMoviesByGenre();
     </script>
